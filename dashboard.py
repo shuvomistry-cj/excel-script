@@ -1,40 +1,69 @@
 import streamlit as st
 import pandas as pd
+import io
 from pathlib import Path
-from analyser import analyse, analyse_df
+from analyser import analyse_df  # We'll only use analyse_df
 from st_aggrid import AgGrid, GridOptionsBuilder
 
+# App configuration
 st.set_page_config(page_title="Lead QA Dashboard", layout="wide")
-
-PROJECT_DIR = Path(__file__).resolve().parent
-XL_PATH = PROJECT_DIR / "Book1.xlsx"
-
 st.title("📊 Lead Quality Assurance Dashboard")
 
 # ------------------ Upload & Template ------------------
-col_up, col_dl = st.columns([2, 1])
-with col_dl:
-    if XL_PATH.exists():
-        import io
-        sample_buf = io.BytesIO()
-        pd.read_excel(XL_PATH, nrows=0).to_excel(sample_buf, index=False)
-        st.download_button(
-            "⬇️ Download Sample Template",
-            data=sample_buf.getvalue(),
-            file_name="sample_template.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+st.sidebar.header("Data Upload")
 
-uploaded_file = col_up.file_uploader("Upload Excel for Analysis", type=["xlsx"], accept_multiple_files=False)
+# Generate and download sample template
+sample_df = pd.DataFrame(columns=[
+    "Created Date", "Lead Name", "Mobile Number",
+    "Assignment Status", "Assigned To", "Lead Status",
+    "Followup Status", "tag", "Highest_Bill"
+])
 
-if uploaded_file:
-    df_uploaded = pd.read_excel(uploaded_file)
-    faulty_df, by_date_df, accuracy_df = analyse_df(df_uploaded)
-else:
-    if not XL_PATH.exists():
-        st.error("No default Excel file found and none uploaded.")
-        st.stop()
-    faulty_df, by_date_df, accuracy_df = analyse(XL_PATH)
+# Create sample template in memory
+with st.sidebar.expander("📤 Download Template"):
+    st.write("Download this template and fill in your data:")
+    sample_buf = io.BytesIO()
+    with pd.ExcelWriter(sample_buf, engine='openpyxl') as writer:
+        sample_df.to_excel(writer, index=False, sheet_name='Leads')
+    st.download_button(
+        "⬇️ Download Excel Template",
+        data=sample_buf.getvalue(),
+        file_name="lead_analysis_template.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+
+# File uploader
+uploaded_file = st.sidebar.file_uploader(
+    "📤 Upload Excel File",
+    type=["xlsx"],
+    help="Upload your Excel file with lead data"
+)
+
+# Process uploaded file
+if not uploaded_file:
+    st.info("👈 Please upload an Excel file to begin analysis")
+    st.stop()
+
+try:
+    with st.spinner("Analyzing data..."):
+        df_uploaded = pd.read_excel(uploaded_file)
+        if df_uploaded.empty:
+            st.error("The uploaded file is empty.")
+            st.stop()
+            
+        # Check for required columns
+        required_columns = {"Created Date", "Lead Name", "Mobile Number", "Assigned To", 
+                          "Lead Status", "Followup Status", "Highest_Bill"}
+        missing = required_columns - set(df_uploaded.columns)
+        if missing:
+            st.error(f"Missing required columns: {', '.join(missing)}")
+            st.stop()
+            
+        faulty_df, by_date_df, accuracy_df = analyse_df(df_uploaded)
+        
+except Exception as e:
+    st.error(f"❌ Error processing file: {str(e)}")
+    st.stop()
 
 # ------------------ Tab 1 ---------------------------------------------------
 tab1, tab2, tab3 = st.tabs(["Faulty Lead & Followup", "Employees Fault", "Top Performers"])
