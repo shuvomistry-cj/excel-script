@@ -1,0 +1,147 @@
+1. New Lead
+Definition: Fresh lead just entered the system.
+
+Condition: No action taken yet.
+
+Note: No follow-up status or date assigned yet.
+
+2. Cold Lead
+Condition: If bill tag is null or less than 999.
+
+Status Options:
+
+No Response – No response from the lead after an attempt.
+
+Follow-Up Scheduled – A follow-up call or action is scheduled for a future time.
+
+Awaiting Callback – Lead requested a callback; waiting for their response.
+
+Re-engagement Needed – First follow-up or callback done, but after 7 days, no response from the lead. May still be reactivated with a new attempt.
+
+3. Warm Lead
+Condition: If bill tag is between 1000 and 1999.
+
+Status Options: Same as Cold Lead.
+
+No Response
+
+Follow-Up Scheduled
+
+Awaiting Callback
+
+Re-engagement Needed
+
+4. Hot Lead
+Condition: If bill tag is between 2000 and 3999 or above 4000.
+
+Status Options: Same as Cold Lead.
+
+No Response
+
+Follow-Up Scheduled
+
+Awaiting Callback
+
+Re-engagement Needed
+
+5. Home Visit Pending
+Definition: Home visit requested by the customer but not yet scheduled.
+
+Status Options:
+
+Follow-Up Scheduled
+
+Awaiting Callback
+
+Re-engagement Needed
+
+6. Home Visit Scheduled
+Definition: Home visit confirmed and scheduled with the lead.
+
+Status Options:
+
+Follow-Up Scheduled
+
+Awaiting Callback
+
+Re-engagement Needed
+
+7. Home Visit Completed
+Definition: Field team has successfully completed the home visit.
+
+8. Proposal Shared
+Definition: Proposal or plan sent to the customer.
+
+Next Actions:
+
+Waiting for feedback.
+
+Awaiting Callback
+
+No Response – No response from the lead after 7 days.
+
+Re-engagement Needed – If no reply even after 7 days, the lead may be reactivated with a fresh follow-up.
+
+9. In Discussion
+Definition: Ongoing conversation, but customer has not yet confirmed.
+
+Status Options:
+
+Awaiting Callback
+
+No Response
+
+Re-engagement Needed
+
+10. Waiting for Docs
+Definition: Waiting for the customer to submit required documents.
+
+Status Options:
+
+Follow-Up Scheduled
+
+Awaiting Callback
+
+Re-engagement Needed
+
+11. Deal Lost
+Definition: Lead declined the offer or is no longer interested.
+
+Conditions:
+
+Customer stays in a rented house or apartment.
+
+Poor CIBIL score.
+
+Insufficient or unavailable documents.
+
+12. Dead Lead
+Definition: Lead is unreachable, invalid, or permanently disqualified.
+
+Conditions:
+
+Number not working.
+
+Out of service area.
+
+Bill tag less than 999.
+
+13. Dead Won
+Definition: When the registration is finally completed.
+
+Condition: Registration must be completed or about to complete.
+
+WhatsApp Follow-Up (Automated)
+Attempt 1 to 9:
+
+Automated follow-up attempts via WhatsApp API.
+
+Each attempt is counted as an outreach effort.
+
+WhatsApp Replied:
+
+Lead has replied via WhatsApp.
+
+Follow-up status will change automatically.
+
+When WhatsApp Replied status appears, telecallers need to reconnect with the customer.
