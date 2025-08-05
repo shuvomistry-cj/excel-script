@@ -103,11 +103,26 @@ with tab1:
     gb.configure_default_column(filter='agTextColumnFilter', floatingFilter=True, resizable=True)
     grid_options = gb.build()
     AgGrid(
-        display_df,
-        gridOptions=grid_options,
-        height=600,
-        fit_columns_on_grid_load=True,
-        enable_enterprise_modules=False,
+    display_df,
+    gridOptions=grid_options,
+    height=600,
+    fit_columns_on_grid_load=True,
+    enable_enterprise_modules=False,
+)
+
+# Add download button for Detailed Fault List
+if not display_df.empty:
+    # Create a buffer to store the Excel file in memory
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        display_df.to_excel(writer, index=False, sheet_name='Detailed_Fault_List')
+    
+    # Create the download button
+    st.download_button(
+        label="⬇️ Download Detailed Fault List (Excel)",
+        data=output.getvalue(),
+        file_name="detailed_fault_list.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
 # ------------------ Tab 2 ---------------------------------------------------
